@@ -1,0 +1,5 @@
+package com.debugador.project.domain;
+
+import java.util.UUID;
+
+public record Project(UUID id, String name, String repositoryUrl, String defaultBranch) {}

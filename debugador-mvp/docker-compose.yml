@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: debugador-postgres
+    environment:
+      POSTGRES_DB: debugador
+      POSTGRES_USER: debugador
+      POSTGRES_PASSWORD: debugador
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U debugador -d debugador"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    container_name: debugador-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: debugador-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/debugador
+      SPRING_DATASOURCE_USERNAME: debugador
+      SPRING_DATASOURCE_PASSWORD: debugador
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  analyzer:
+    build:
+      context: .
+      dockerfile: workers/analyzer/Dockerfile
+    container_name: debugador-analyzer
+    environment:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+    container_name: debugador-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -1,0 +1,20 @@
+{
+  "base": [
+    "implementacao",
+    "desenvolvedores",
+    "qualidade",
+    "produto",
+    "devops",
+    "dba"
+  ],
+  "specialized": [
+    "java-spring",
+    "react",
+    "arquitetura",
+    "code-review",
+    "testes",
+    "postgresql",
+    "docker",
+    "ci-cd"
+  ]
+}
