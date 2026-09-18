@@ -221,9 +221,9 @@ Levantamento em relação ao fluxo (código em `debugador-mvp/`).
 
 **Pendências sugeridas para próximos cards (não prescritivos além do backlog do projeto):**
 
-- **DBG-002:** Fundação de **Project + Repository** persistidos, alinhamento OpenAPI, testes de integração com Flyway.
-- **DBG-003:** **SourceSnapshot**, fila de **Analysis**, worker analyzer produzindo **SoftwareElement** / **Relationship**.
-- **DBG-004:** **Scenario**, **Diagram**, APIs de consulta e regras mínimas de geração/edição.
+- **DBG-002:** **Linguagem ubíqua** e **modelo de domínio** — concluído em [`docs/domain/`](../domain/glossary.md) e [`docs/diagrams/domain-model.mmd`](../diagrams/domain-model.mmd).
+- **DBG-003:** **Casos de uso** e fatias verticais do MVP (derivados do fluxo e das jornadas).
+- **DBG-004:** **Arquitetura** formal do MVP e **ADRs** (complemento a `docs/architecture` e ao modelo de domínio).
 
 Cards posteriores (execução, agent, correlação, UI vertical — ex. referência futura DBG-034) devem fechar Execution → Trace/Span → Correlation → Visualização.
 
@@ -240,6 +240,9 @@ Cards posteriores (execução, agent, correlação, UI vertical — ex. referên
 ## Referências
 
 - [README do projeto](../../README.md)
+- [Linguagem ubíqua e glossário](../domain/glossary.md)
+- [Modelo de domínio](../domain/domain-model.md)
+- [Diagrama do domínio (Mermaid)](../diagrams/domain-model.mmd)
 - [Arquitetura](../architecture/README.md)
 - [OpenAPI](../openapi.yaml)
 - [Schema inicial](../../apps/api/src/main/resources/db/migration/V1__initial_schema.sql)

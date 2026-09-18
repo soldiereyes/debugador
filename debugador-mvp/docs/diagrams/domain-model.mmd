@@ -1,0 +1,129 @@
+%% Modelo de domínio MVP — ver docs/domain/domain-model.md
+%% Nota: SoftwareModel = SoftwareElement + Relationship (resultado de Analysis)
+
+classDiagram
+    direction TB
+
+    namespace ProjectContext {
+        class Project {
+            <<aggregate root>>
+            +UUID id
+            +String name
+        }
+        class Repository {
+            +UUID id
+            +Provider provider
+            +GitUrl url
+            +BranchName defaultBranch
+        }
+        class SourceSnapshot {
+            <<aggregate root>>
+            +UUID id
+            +CommitHash commitHash
+            +BranchName branch
+        }
+        Project "1" --> "1" Repository : owns
+        Project "1" --> "*" SourceSnapshot : versions
+    }
+
+    namespace AnalysisContext {
+        class Analysis {
+            <<aggregate root>>
+            +AnalysisStatus status
+            +Instant startedAt
+            +Instant finishedAt
+            +String errorMessage
+        }
+        class SoftwareElement {
+            +ElementType type
+            +String name
+            +String fullyQualifiedName
+            +CodeAnchor anchor
+        }
+        class Relationship {
+            +RelationshipType type
+        }
+        SourceSnapshot "1" --> "*" Analysis : analyzed by
+        Analysis "1" --> "*" SoftwareElement : produces
+        Analysis "1" --> "*" Relationship : produces
+        SoftwareElement "1" --> "*" Relationship : source
+        SoftwareElement "1" --> "*" Relationship : target
+    }
+
+    namespace ScenarioContext {
+        class Scenario {
+            <<aggregate root>>
+            +String name
+            +String description
+        }
+        class EntryPoint {
+            +EntryPointType type
+            +String identifier
+        }
+        Project "1" --> "*" Scenario : defines
+        SourceSnapshot "1" --> "*" Scenario : bound to
+        Scenario "1" --> "1" EntryPoint : starts at
+    }
+
+    namespace DiagramContext {
+        class Diagram {
+            <<aggregate root>>
+            +DiagramType type
+            +int version
+        }
+        class Participant {
+            +String name
+        }
+        class Interaction {
+            +InteractionType type
+            +String operation
+            +CodeAnchor anchor
+        }
+        Scenario "1" --> "*" Diagram : has
+        SourceSnapshot "1" --> "*" Diagram : anchors
+        Diagram "1" --> "*" Participant : contains
+        Diagram "1" --> "*" Interaction : contains
+        Participant "1" --> "*" Interaction : source
+        Participant "1" --> "*" Interaction : target
+        SoftwareElement "0..1" .. Participant : maps to
+    }
+
+    namespace ExecutionContext {
+        class Execution {
+            <<aggregate root>>
+            +ExecutionStatus status
+            +Instant startedAt
+            +Instant finishedAt
+        }
+        class Trace {
+            +String externalTraceId
+        }
+        class Span {
+            +String externalSpanId
+            +String parentSpanId
+            +SpanType type
+            +Instant startedAt
+            +long durationMs
+            +CodeAnchor anchor
+        }
+        Scenario "1" --> "*" Execution : runs
+        SourceSnapshot "1" --> "*" Execution : against
+        Execution "1" --> "1" Trace : records
+        Trace "1" --> "*" Span : contains
+        SoftwareElement "0..1" .. Span : maps to
+    }
+
+    namespace CorrelationContext {
+        class Correlation {
+            <<aggregate root>>
+            +CorrelationType type
+            +decimal confidence
+        }
+        class Evidence {
+            +EvidenceType type
+            +String source
+        }
+        Interaction "1" --> "*" Correlation : expected step
+        Span "1" --> "*" Correlation : observed step
+        Correlation "1" --> "*" Evidence : supported by
+    }
