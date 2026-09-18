@@ -4,6 +4,8 @@ Software Architecture & Execution Explorer.
 
 ## MVP
 
+Documentação de produto: [docs/product/mvp.md](docs/product/mvp.md) (jornadas: [docs/product/journeys.md](docs/product/journeys.md)).
+
 - Java 21
 - Spring Boot 4.1.1
 - PostgreSQL 17
